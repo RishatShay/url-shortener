@@ -1,16 +1,11 @@
 package main
 
 import (
+	"log"
 	"log/slog"
 	"os"
 
 	"github.com/RishatShay/url-shortener/internal/config"
-)
-
-const (
-	envLocal = "local"
-	envDev   = "dev"
-	envProd  = "prod"
 )
 
 func main() {
@@ -29,23 +24,31 @@ func main() {
 	// Run server
 }
 
+const (
+	envLocal = "local"
+	envDev   = "dev"
+	envProd  = "prod"
+)
+
 func setupLogger(env string) *slog.Logger {
-	var log *slog.Logger
+	var loger *slog.Logger
 
 	switch env {
 	case envLocal:
-		log = slog.New(
+		loger = slog.New(
 			slog.NewTextHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envDev:
-		log = slog.New(
+		loger = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelDebug}),
 		)
 	case envProd:
-		log = slog.New(
+		loger = slog.New(
 			slog.NewJSONHandler(os.Stdout, &slog.HandlerOptions{Level: slog.LevelInfo}),
 		)
+	default:
+		log.Fatalf("unable to create loger: incorrect environment (env) value: %s", env)
 	}
 
-	return log
+	return loger
 }
