@@ -13,7 +13,7 @@ func main() {
 	cfg := config.MustLoad()
 
 	// Init logger
-	logger := setupLogger(cfg.Env)
+	logger := MustSetupLogger(cfg.Env)
 	logger.Info("starting url-shortener", slog.String("env", cfg.Env))
 	logger.Debug("debug messages are enabled")
 
@@ -30,7 +30,7 @@ const (
 	envProd  = "prod"
 )
 
-func setupLogger(env string) *slog.Logger {
+func MustSetupLogger(env string) *slog.Logger {
 	var loger *slog.Logger
 
 	switch env {
