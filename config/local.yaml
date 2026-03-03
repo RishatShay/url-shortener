@@ -1,0 +1,7 @@
+env: "local"  # local VS dev VS prod
+storage_path: "./storage/storage.db"  # change with other DB
+
+http_server:
+  address: "localhost:8080"
+  timeout: 4s
+  idle_timeout: 60s 
