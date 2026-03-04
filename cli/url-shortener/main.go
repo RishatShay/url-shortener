@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/RishatShay/url-shortener/internal/config"
+	"github.com/RishatShay/url-shortener/internal/storage/sqlite"
 )
 
 func main() {
@@ -18,7 +19,10 @@ func main() {
 	logger.Debug("debug messages are enabled")
 
 	// Init storage
-
+	storage, err := sqlite.New(cfg.StoragePath)
+	if err != nil {
+		logger.Error("failed to init storage", slog.String("error", err.Error()))
+	}
 	// Init router
 
 	// Run server
