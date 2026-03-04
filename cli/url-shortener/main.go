@@ -22,7 +22,10 @@ func main() {
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
 		logger.Error("failed to init storage", slog.String("error", err.Error()))
+		os.Exit(1)
 	}
+
+	_ = storage
 	// Init router
 
 	// Run server
