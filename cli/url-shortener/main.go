@@ -7,6 +7,8 @@ import (
 
 	"github.com/RishatShay/url-shortener/internal/config"
 	"github.com/RishatShay/url-shortener/internal/storage/sqlite"
+	"github.com/RishatShay/url-shortener/internal/utils/logger"
+	"github.com/go-chi/chi/v5"
 )
 
 func main() {
@@ -14,19 +16,21 @@ func main() {
 	cfg := config.MustLoad()
 
 	// Init logger
-	logger := MustSetupLogger(cfg.Env)
-	logger.Info("starting url-shortener", slog.String("env", cfg.Env))
-	logger.Debug("debug messages are enabled")
+	log := MustSetupLogger(cfg.Env)
+	log.Info("starting url-shortener", slog.String("env", cfg.Env))
+	log.Debug("debug messages are enabled")
 
 	// Init storage
 	storage, err := sqlite.New(cfg.StoragePath)
 	if err != nil {
-		logger.Error("failed to init storage", slog.String("error", err.Error()))
+		log.Error("failed to init storage", slog.String("error", err.Error()))
 		os.Exit(1)
 	}
-
 	_ = storage
+
 	// Init router
+	router := chi.NewRouter()
+	router.Use(logger.New(log))
 
 	// Run server
 }

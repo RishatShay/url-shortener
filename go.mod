@@ -3,6 +3,7 @@ module github.com/RishatShay/url-shortener
 go 1.25.3
 
 require (
+	github.com/go-chi/chi/v5 v5.2.5
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	modernc.org/sqlite v1.46.1
 )
