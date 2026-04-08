@@ -3,12 +3,15 @@ package main
 import (
 	"log"
 	"log/slog"
+	"net/http"
 	"os"
 
 	"github.com/RishatShay/url-shortener/internal/config"
+	"github.com/RishatShay/url-shortener/internal/http-server/handlers/url/save"
+	"github.com/RishatShay/url-shortener/internal/http-server/middleware/logger"
 	"github.com/RishatShay/url-shortener/internal/storage/sqlite"
-	"github.com/RishatShay/url-shortener/internal/utils/logger"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
@@ -30,9 +33,30 @@ func main() {
 
 	// Init router
 	router := chi.NewRouter()
-	router.Use(logger.New(log))
 
+	router.Use(middleware.RequestID)
+	router.Use(logger.New(log))
+	router.Use(middleware.Recoverer)
+	router.Use(middleware.URLFormat)
+
+	router.Post("/url", save.New(log, storage))
 	// Run server
+
+	log.Info("starting server", "address", cfg.HTTPServer.Address)
+
+	srv := &http.Server{
+		Addr:         cfg.HTTPServer.Address,
+		Handler:      router,
+		ReadTimeout:  cfg.HTTPServer.Timeout,
+		WriteTimeout: cfg.HTTPServer.Timeout,
+		IdleTimeout:  cfg.HTTPServer.Idle_timeout,
+	}
+
+	if err := srv.ListenAndServe(); err != nil {
+		log.Error("failed to start server")
+	}
+
+	log.Error("server is down")
 }
 
 const (
